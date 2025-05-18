@@ -28,28 +28,18 @@ class KafkaConsumerConfig(
     @Bean
     fun kafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, String> {
         val factory = ConcurrentKafkaListenerContainerFactory<String, String>()
-        factory.consumerFactory = consumerFactory
-        
-        // 리스너 동시성 설정 (각 리스너 인스턴스당 동시에 실행되는 스레드 수)
-        factory.setConcurrency(3)
-        
-        // 배치 처리 비활성화 (메시지별 처리)
-        factory.isBatchListener = false
-        
-        // 자동 시작 활성화
-        factory.setAutoStartup(true)
-        
-        // AckMode 설정 (레코드 처리 후 자동 커밋)
-        factory.containerProperties.ackMode = ContainerProperties.AckMode.RECORD
-        
-        // 컨슈머 재시작 전략 설정
-        factory.containerProperties.isMissingTopicsFatal = false
-        
-        // 에러 핸들러 설정
-        factory.setCommonErrorHandler(DefaultErrorHandler { record, exception ->
-            logger.error("메시지 처리 중 오류 발생: ${record.key()} - ${record.value()}", exception)
-        })
-        
+            .apply {
+                consumerFactory = consumerFactory
+                setConcurrency(3)
+                isBatchListener = false
+                setAutoStartup(true)
+                containerProperties.ackMode = ContainerProperties.AckMode.RECORD
+                containerProperties.isMissingTopicsFatal = false
+                setCommonErrorHandler(DefaultErrorHandler { record, exception ->
+                    logger.error("메시지 처리 중 오류 발생: ${record.key()} - ${record.value()}", exception)
+                })
+            }
+
         return factory
     }
 }
