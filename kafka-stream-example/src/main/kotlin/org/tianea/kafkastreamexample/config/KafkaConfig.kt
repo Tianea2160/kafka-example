@@ -37,7 +37,6 @@ class KafkaConfig {
             .partitions(1)
             .replicas(1)
             .configs(mapOf(
-                "auto.create.topics.enable" to "true",
                 "min.insync.replicas" to "1"
             ))
             .build()
@@ -49,7 +48,6 @@ class KafkaConfig {
             .partitions(1)
             .replicas(1)
             .configs(mapOf(
-                "auto.create.topics.enable" to "true",
                 "min.insync.replicas" to "1"
             ))
             .build()
