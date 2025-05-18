@@ -62,4 +62,19 @@ class KafkaConsumerService {
     ) {
         logger.info("처리된 메시지 수신: $key - $message [topic : $topic, partition: $partition, offset: $offset]")
     }
+    
+    @KafkaListener(
+        topics = ["\${kafka.join-output-topic:join-output-topic}"],
+        groupId = "join-consumer-group",
+        concurrency = "3"
+    )
+    fun listenJoinResults(
+        @Payload message: String,
+        @Header(KafkaHeaders.RECEIVED_KEY) key: String,
+        @Header(KafkaHeaders.RECEIVED_PARTITION) partition: Int,
+        @Header(KafkaHeaders.RECEIVED_TOPIC) topic: String,
+        @Header(KafkaHeaders.OFFSET) offset: Long
+    ) {
+        logger.info("JOIN 결과 메시지 수신: $key - $message [partition: $partition, offset: $offset]")
+    }
 }

@@ -57,3 +57,6 @@ kafka:
   merge-input-topic-1: merge-input-topic-1
   merge-input-topic-2: merge-input-topic-2
   merge-output-topic-1: merge-output-topic-1
+  join-input-topic-1: join-input-topic-1
+  join-input-topic-2: join-input-topic-2
+  join-output-topic: join-output-topic

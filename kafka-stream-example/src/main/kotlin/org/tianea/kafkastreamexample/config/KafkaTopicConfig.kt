@@ -37,6 +37,15 @@ class KafkaTopicConfig(
     @Value("\${kafka.merge-output-topic-1:merge-output-topic-1}")
     private lateinit var mergeOutputTopic1: String
 
+    @Value("\${kafka.join-input-topic-1:join-input-topic-1}")
+    private lateinit var joinInputTopic1: String
+
+    @Value("\${kafka.join-input-topic-2:join-input-topic-2}")
+    private lateinit var joinInputTopic2: String
+
+    @Value("\${kafka.join-output-topic:join-output-topic}")
+    private lateinit var joinOutputTopic: String
+
     @PostConstruct
     fun init() {
         // AdminClient를 사용하여 토픽이 존재하는지 확인하고 필요시 생성
@@ -49,12 +58,14 @@ class KafkaTopicConfig(
             // 필요한 토픽들이 존재하는지 확인하고 없으면 생성 목록에 추가
             for (topic in listOf(
                 inputTopic, inputTopic2, outputTopic, mergedTopic,
-                mergeInputTopic1, mergeInputTopic2, mergeOutputTopic1
+                mergeInputTopic1, mergeInputTopic2, mergeOutputTopic1,
+                joinInputTopic1, joinInputTopic2, joinOutputTopic
             )) {
                 if (!topicNames.contains(topic)) {
                     topicsToCreate.add(
                         TopicBuilder.name(topic)
-                            .partitions(if (topic == mergeInputTopic1 || topic == mergeInputTopic2 || topic == mergeOutputTopic1) 3 else 1)
+                            .partitions(if (topic == mergeInputTopic1 || topic == mergeInputTopic2 || topic == mergeOutputTopic1 ||
+                                           topic == joinInputTopic1 || topic == joinInputTopic2 || topic == joinOutputTopic) 3 else 1)
                             .replicas(1)
                             .build()
                     )
@@ -97,6 +108,30 @@ class KafkaTopicConfig(
     fun mergeOutputTopic1(): NewTopic {
         return TopicBuilder.name(mergeOutputTopic1)
             .partitions(3)  // 파티션 수를 3으로 증가
+            .replicas(1)
+            .build()
+    }
+    
+    @Bean
+    fun joinInputTopic1(): NewTopic {
+        return TopicBuilder.name(joinInputTopic1)
+            .partitions(3)
+            .replicas(1)
+            .build()
+    }
+
+    @Bean
+    fun joinInputTopic2(): NewTopic {
+        return TopicBuilder.name(joinInputTopic2)
+            .partitions(3)
+            .replicas(1)
+            .build()
+    }
+
+    @Bean
+    fun joinOutputTopic(): NewTopic {
+        return TopicBuilder.name(joinOutputTopic)
+            .partitions(3)
             .replicas(1)
             .build()
     }
