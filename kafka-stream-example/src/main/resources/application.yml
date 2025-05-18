@@ -1,0 +1,44 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: kafka-stream-example
+  kafka:
+    bootstrap-servers: localhost:9092
+    properties:
+      # 클러스터에서 필요한 경우 추가
+      security.protocol: PLAINTEXT
+    consumer:
+      auto-offset-reset: earliest
+      group-id: kafka-stream-example
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      properties:
+        spring.json.trusted.packages: '*'
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all
+    streams:
+      application-id: kafka-stream-example
+      properties:
+        default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+        default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+        processing.guarantee: exactly_once_v2
+        commit.interval.ms: 100
+        cache.max.bytes.buffering: 0
+        auto.create.topics.enable: true
+  
+# 로깅 설정
+logging:
+  level:
+    root: info
+    org.tianea.kafkastreamexample: debug
+    org.apache.kafka: warn
+
+# 커스텀 설정
+kafka:
+  bootstrap-servers: localhost:9092
+  input-topic: input-topic
+  output-topic: output-topic
