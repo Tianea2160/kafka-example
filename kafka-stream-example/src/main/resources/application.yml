@@ -2,6 +2,8 @@ server:
   port: 8081
 
 spring:
+  main:
+    allow-bean-definition-overriding: true
   application:
     name: kafka-stream-example
   kafka:
@@ -16,6 +18,9 @@ spring:
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       properties:
         spring.json.trusted.packages: '*'
+    listener:
+      type: batch
+      concurrency: 3  # 각 리스너마다 3개의 스레드 사용
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
@@ -30,8 +35,11 @@ spring:
         cache.max.bytes.buffering: 0
         auto.create.topics.enable: true
         replication.factor: 1
-        num.stream.threads: 1
-  
+        num.stream.threads: 3
+        state.dir: /tmp/kafka-streams
+        max.task.idle.ms: 100
+        topology.optimization: all  # 토폴로지 최적화 활성화
+
 # 로깅 설정
 logging:
   level:
@@ -43,4 +51,9 @@ logging:
 kafka:
   bootstrap-servers: localhost:9092
   input-topic: input-topic
+  input-topic2: input-topic2
   output-topic: output-topic
+  merged-topic: merged-topic
+  merge-input-topic-1: merge-input-topic-1
+  merge-input-topic-2: merge-input-topic-2
+  merge-output-topic-1: merge-output-topic-1
