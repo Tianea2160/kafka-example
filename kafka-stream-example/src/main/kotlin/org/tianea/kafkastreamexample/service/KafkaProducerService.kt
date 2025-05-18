@@ -21,8 +21,10 @@ class KafkaProducerService(
         return kafkaTemplate.send(inputTopic, key, message)
             .whenComplete { result, ex ->
                 if (ex == null) {
-                    logger.info("전송 성공: {} - {} [partition: {}, offset: {}]",
-                        key, message, result.recordMetadata.partition(), result.recordMetadata.offset())
+                    logger.info(
+                        "전송 성공: {} - {} [partition: {}, offset: {}]",
+                        key, message, result.recordMetadata.partition(), result.recordMetadata.offset()
+                    )
                 } else {
                     logger.error("전송 실패: {} - {}", key, message, ex)
                 }

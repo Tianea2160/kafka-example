@@ -36,7 +36,10 @@ class KafkaConfig {
         return TopicBuilder.name(inputTopic)
             .partitions(1)
             .replicas(1)
-            .configs(mapOf("auto.create.topics.enable" to "true"))
+            .configs(mapOf(
+                "auto.create.topics.enable" to "true",
+                "min.insync.replicas" to "1"
+            ))
             .build()
     }
 
@@ -45,7 +48,10 @@ class KafkaConfig {
         return TopicBuilder.name(outputTopic)
             .partitions(1)
             .replicas(1)
-            .configs(mapOf("auto.create.topics.enable" to "true"))
+            .configs(mapOf(
+                "auto.create.topics.enable" to "true",
+                "min.insync.replicas" to "1"
+            ))
             .build()
     }
 
@@ -53,7 +59,10 @@ class KafkaConfig {
     @Bean
     fun kafkaAdmin(): KafkaAdmin {
         val configs = mapOf(
-            AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapServers
+            AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapServers,
+            "transaction.state.log.replication.factor" to "1",
+            "transaction.state.log.min.isr" to "1",
+            "offsets.topic.replication.factor" to "1"
         )
         return KafkaAdmin(configs)
     }
@@ -114,7 +123,9 @@ class KafkaConfig {
             StreamsConfig.COMMIT_INTERVAL_MS_CONFIG to "100",
             StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG to "0",
             ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
-            StreamsConfig.PROCESSING_GUARANTEE_CONFIG to StreamsConfig.EXACTLY_ONCE_V2
+            StreamsConfig.PROCESSING_GUARANTEE_CONFIG to StreamsConfig.AT_LEAST_ONCE,
+            StreamsConfig.REPLICATION_FACTOR_CONFIG to 1,
+            StreamsConfig.producerPrefix(ProducerConfig.TRANSACTION_TIMEOUT_CONFIG) to 60000
         )
         return KafkaStreamsConfiguration(props)
     }

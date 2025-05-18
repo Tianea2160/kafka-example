@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8081
 
 spring:
   application:
@@ -25,10 +25,12 @@ spring:
       properties:
         default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
         default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
-        processing.guarantee: exactly_once_v2
+        processing.guarantee: at_least_once
         commit.interval.ms: 100
         cache.max.bytes.buffering: 0
         auto.create.topics.enable: true
+        replication.factor: 1
+        num.stream.threads: 1
   
 # 로깅 설정
 logging:

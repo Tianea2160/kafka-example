@@ -1,6 +1,7 @@
 package org.tianea.kafkastreamexample.stream
 
 import org.apache.kafka.streams.StreamsBuilder
+import org.apache.kafka.streams.kstream.KStream
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -20,14 +21,18 @@ class StreamsProcessor {
     private lateinit var outputTopic: String
 
     @Bean
-    fun kStream(streamsBuilder: StreamsBuilder): Unit {
+    fun kStream(streamsBuilder: StreamsBuilder): KStream<String, String> {
         // Stream 토폴로지 구성
-        streamsBuilder.stream<String, String>(inputTopic)
+        val stream = streamsBuilder.stream<String, String>(inputTopic)
+        
+        stream
             .peek { key, value -> logger.info("스트림 입력: {} - {}", key, value) }
             .mapValues { value -> "$value (processed)" }
             .peek { key, value -> logger.info("스트림 출력: {} - {}", key, value) }
             .to(outputTopic)
 
         logger.info("Kafka Streams 토폴로지가 구성되었습니다.")
+        
+        return stream
     }
 }
